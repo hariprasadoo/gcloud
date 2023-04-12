@@ -1,0 +1,9 @@
+apiVersion: skaffold/v2beta4
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+    - ./infra/k8s/*
+build:
+  googleCloudBuild:
+    projectId: astrodev2023

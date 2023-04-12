@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: mysql-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+          - name: "MYSQL_DATABASE"
+            value: "AstroDB"
+          - name: MYSQL_ROOT_PASSWORD
+            value: password
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc
+# to access the database lets made tempory pod with 
+# pod name mysql-client when we exit the mysql-client will be deleted.
+# $ kubectl get pods -l app=mysql -o wide
+# $ kubectl run -it --rm --image=mysql:8.0 --restart=Never mysql-client -- mysql -h 10.108.2.41 -ppassword
